@@ -1,8 +1,7 @@
 package sample;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Marking will be based upon producing a readable, well engineered solution rather than factors
@@ -26,20 +25,16 @@ public class StringSorter {
      * at the end of the list.
      */
     public List<String> sortStrings(List<String> unsortedStrings, String exceptionChar) {
-        List<String> withPrefixWords = new ArrayList<>();
-        List<String> withoutPrefixWords = new ArrayList<>();
-        for (String word : unsortedStrings) {
-            if (word.startsWith(exceptionChar)) {
-                withPrefixWords.add(word);
-            } else {
-                withoutPrefixWords.add(word);
-            }
-        }
-        withPrefixWords.sort(Collections.reverseOrder());
-        Collections.sort(withoutPrefixWords);
 
-        withoutPrefixWords.addAll(withPrefixWords);
-        return withoutPrefixWords;
+        var sortedWithPrefix = unsortedStrings.stream()
+                .filter(word -> word.startsWith(exceptionChar))
+                .sorted(Collections.reverseOrder());
+        var sortedWithoutPrefix = unsortedStrings.stream()
+                .filter(word -> !word.startsWith(exceptionChar))
+                .sorted();
+
+        return Stream.concat(sortedWithoutPrefix, sortedWithPrefix)
+                .toList();
     }
-
 }
+
